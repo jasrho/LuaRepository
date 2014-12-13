@@ -1,0 +1,29 @@
+from here:
+www.reddit.com/r/personalfinance/comments/2ov1q8/what_do_you_do_to_bolster_your_income_on_the_side/
+
+
+I am an SQA engineer and am a manager from 9-5, and then I do my job on Mobile App's for friends on the side. This usually nets me a percentage (5-10%) of Ad revenue per every app that I touch. The income from this is insurmountable. You're literally making money every second of the day. To put this into perspective, I have a 10% share in ad revenue on one specific app, which brings in $8-900 every month (admob) aka free rent. Imagine what the developer is making (50% percent), across all of his apps!
+
+This is more of a long-term goal that is achievable by anybody, as long as you're dedicated to learning basic programming/QA practices in your down time. At the very least, use this comment as motivation to set yourself a goal, the bigger picture in the long run. You can do this.
+
+
+
+
+Start Here: http://developer.coronalabs.com/resources/corona-quick-start
+
+This will help you install the two basic programs needed - Corona SDK and a Text Editor, also known as an IDE (Sublime Text is what I would recommend)
+
+My other resources are Youtube and Google. Individuals are more than happy to provide Templates online for free, for ex. this slot machine
+
+http://www.tandgapps.co.uk/resources/tutorial-making-a-slot-machine/
+
+Think small, think simple. There's a reason I chose a slot machine. They're easy to build, and they're easy to find online, plus they make a lot of money. Watching the video in the link above will help you understand what lines of code perform specific functions. Tinker around and change things for yourself and see what happens. Discovery is key here, it's a learning experience. If something messes up, just press CTRL + Z and it will revert :)
+
+Lastly, understand that your income is not based on in store purchases, but rather Advertising clicks. Google Admob is the primary source of funds. The developer places a small banner advertisement on his app, and every-time a user clicks that app, that is money in your pocket, but we can get into those things later.
+
+If you want to streamline this process, network and find an individual who is already in the position you want to be in the end. I assure you they will go leaps and bounds towards helping you program, as long as you keep the vision in sight and try your hardest, and lastly don't be afraid to ask for help.
+
+All my best!
+
+
+I mingle in both fields, but my scope is testing. My main client netted 12 million last year in revenue. Check out "Bomzy Apps." This all began with one person, whom I worked with at a previous job. He decided to build on his enterprise by himself, and now runs his own business with just a handful of individuals, working on his own time. That is freedom. All it takes is a push. Where you take it from there is up to how much you are willing to keep pushing at it. Being a dev, you already know what to expect. I have complete faith in your abilities. The only person holding you back is yourself.
