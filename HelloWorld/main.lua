@@ -4,6 +4,10 @@
 --
 -----------------------------------------------------------------------------------------
 
+-- online Lua Demo
+-- http://www.lua.org/cgi-bin/demo
+
+-- DEFINE FONT ON ALL WIDGETS - LOOKS FOR HELVELTICA AS DEFAULT, this shows as warning
 
 -- double dash ( -- ) is inline COMMENT
 
@@ -76,13 +80,33 @@ Everything between brackets is commented
 
 -- http://www.reddit.com/r/CoronaSDK/
 
+--Tiling
+--http://forums.coronalabs.com/topic/43973-side-scrolling-background-image-logic/
+
 -- Corona University 
 -- http://coronalabs.com/resources/tutorials/getting-started-with-corona/
 
 -- Your code here
 
--- Hello World
+-- start with debugging and logging
+-- BASIC DEBUGGIN
+-- https://coronalabs.com/blog/2013/07/09/tutorial-basic-debugging/
+print("\n++++++++++++++++++++++++++++++++++++++++++++++++\n")
+_debug = true
+function printDebug(string)
+  if (_debug == true) then 
+      print(string)
+  end
+end
 
+if (_debug == true) then
+	printDebug("Debug Active")
+else
+	print("Debug Off")
+end
+
+
+-- Hello World
 -- print is use to output messages ONLY to the Corona Simulator Console -0 use for debugging
 print("Hello World!")
 
@@ -110,7 +134,7 @@ print("Hello World!")
 -- \[	left square bracket
 -- \]	right square bracket
 
-print("one line\nnext line\n\"in quotes\", 'in quotes'")
+printDebug("one line\nnext line\n\"in quotes\", 'in quotes'")
 
 
 
@@ -181,7 +205,14 @@ animationSpriteFireball:play()
 --local myTextObject = display.newText( "Hello World!", 160, 220, "Arial", 40 )
 local myTextObject2 = display.newText( 'Click to\nChange Color', 160, 240, "Arial", 40 )
 local myTextObject3 = display.newText( "current display", 160, 300, "Arial", 40)
-local myTextObject4 = display.newText( "540x960", 160, 340, "Arial", 40)
+
+-- get current display automagically and display as variable
+local _width = display.contentWidth
+local _height = display.contentHeight
+
+-- use .. to concatenate string
+--local myTextObject4 = display.newText( "540x960", 160, 340, "Arial", 40)
+local myTextObject4 = display.newText( _width.."x".._height, 160, 340, "Times New Roman", 40)
 
 --About "Dot" Notation
 --To access an item from a library, use this notation consistently:
@@ -198,14 +229,25 @@ myTextObject2:setFillColor(255/255,0/255,255/255, 255/255)
 -- can either do as a factoer 0.25 or out of 255 colors 225/255 - can it go larger 1026?
 myTextObject3:setFillColor(255/255,192/255, 0.25, 075) -- :setFillColor(128/255, 0, 0, 0.25)  to do hex and alpha channel
 
--- colors can also be set to variables
+-- colors can also be set to variables in a table
 local mycol = { 0, 255/255, 255/255, 0.25 } -- variable color can be put in config with alpha
 -- alpha can also be useful  when setting a debug flag and testing 
 --fixedColor( mycol ) -- don't think i need this
-myTextObject4:setFillColor( unpack( mycol ) )
+
+--do NOT use upack
+--myTextObject4:setFillColor( unpack( mycol ) )
+-- do this insstead
+for i = 1,100 do
+	myTextObject4:setFillColor( mycol[1], mycol[2], mycol[3], mycol[4] )
+end
+-- as per here:
+--http://docs.coronalabs.com/guide/basics/optimization/index.html#avoid-unpack
 --Reference for more on color values
 --http://forums.coronalabs.com/topic/40216-why-change-the-color-parameter-values/?hl=+graphics++2.0++colors
 --this is a good example of how to set up other variables as well
+
+--text and alignment and stuff
+--http://docs.coronalabs.com/api/library/display/newText.html#updating-the-text-string-post-creation 
 
 -- Plugins
 -- http://plugins.cordova.io/#/
@@ -263,6 +305,7 @@ end
 local function listener(param1, param2)
      return function(event)
           print(event.name, event.phase, param1, param2)
+          --printDebug(event.name, event.phase, param1, param2)  -- this doesn't work with printDebug, probably becuase not all params are  strings
      end
 end    
 
@@ -272,32 +315,71 @@ end
 -- http://stackoverflow.com/questions/8276127/addeventlistener-in-lua
 
 display.currentStage:addEventListener( "tap", screenTap )
-Runtime:addEventListener("tap", listener(animationSprite.isPlaying, "sure"))--console
+Runtime:addEventListener("tap", listener(animationSprite.isPlaying, "sure_is_param2"))--console
 display.currentStage:addEventListener( "tap", TapToStartStop )
 
--- SOUND & AUDIO
---http://docs.coronalabs.com/api/library/audio/play.html
-local laserSound = audio.loadSound( "assets/ding.wav" ) -- does not support mp3
+
 
 
 -- BUTTON
 -- see examples here
 -- ++++++++++++++++++++++++++++++++++++++++++++++++++++
-local widget = require( "widget" )
+-- local widget = require( "widget" ) -- don't need???
+
+
+-- this must be localized in scope "above" where it is used in HhandeButtonEvent/ClickySound
+	  local function disposeSound( event )
+-- --http://forums.coronalabs.com/topic/35085-will-audiofadeout-call-audiodispose/	    	
+        audio.stop( event.channel )
+        audio.dispose( event.handle )
+        laserSound = nil -- can i do NIL on both of these programmatically so I can reuse this?
+        laserChannel = nil
+        printDebug("sound nullified")
+      end --end disposeSound()
 
 -- Function to handle button events
 local function handleButtonEvent( event )
 -- more on event phases
 -- http://docs.coronalabs.com/api/event/touch/phase.html
 	if ("began" == event.phase) then -- event on touch
-		local laserChannel = audio.play( laserSound ) --plays a sound loaded above on any channel
+-- SOUND & AUDIO
+-- http://docs.coronalabs.com/api/library/audio/play.html
+-- Audio Optimization
+-- http://docs.coronalabs.com/guide/basics/optimization/index.html#audio
+
+-- flash the background color
+background:setFillColor(0/255, 0, 0, 0.75)
+--transition.blink( background, { time=1000} )
+
+-- this will allow multiple instances of the same sound to play and each are disposed when done
+      local function ClickySound( )
+        --print("Clicky Sound") --debug only
+        printDebug("Clicky Sound Debug")
+	    -- body
+	    printDebug("sound load")
+        local laserSound = audio.loadSound( "assets/ding.wav" ) -- does not support mp3
+        printDebug("sound play")
+        --plays a sound loaded above on ANY open channel, can also designate a channel
+        local laserChannel = audio.play( laserSound, { onComplete=disposeSound } ) 
+      end -- end ClickySound
+
+
+
+        ClickySound()
 	end
 
     if ( "ended" == event.phase ) then -- event on release
-        print( "Button was pressed and released" ) -- output to console
+        printDebug( "Button was pressed and released" ) -- output to console
+
+        background:setFillColor(128/255, 0, 0, 0.75) --set back to orig
+        --transition.cancel( blink )
     end
 end
 
+
+
+
+local widget = require( "widget" )
 -- Create the widget
 local button1 = widget.newButton
 {
@@ -311,7 +393,9 @@ local button1 = widget.newButton
     cornerRadius = 2,
     fillColor = { default={ 1, 0.75, 0, 1 }, over={ 1, 0.1, 0.7, 0.4 } },
     strokeColor = { default={ 1, 0.4, 0, 1 }, over={ 0.8, 0.8, 1, 1 } },
-    strokeWidth = 4
+    strokeWidth = 4, 
+    font="Arial",
+    fontSize = 20
 }
 
 -- Center the button
@@ -407,6 +491,7 @@ local progressView = widget.newProgressView
     top = 175,
     width = 220,
     isAnimated = true
+    
 }
 
 -- Set the progress to 50%
@@ -476,10 +561,11 @@ scrollView:insert( background )
 -- Listen for segmented control events      
 local function onSegmentPress( event )
     local target = event.target
-    print( "Segment Label is:", target.segmentLabel )
-    print( "Segment Number is:", target.segmentNumber )
+    printDebug( "Segment Label is:", target.segmentLabel )
+    printDebug( "Segment Number is:", target.segmentNumber )
 end
 
+local widget = require( "widget" )
 -- Create a default segmented control
 local segmentedControl = widget.newSegmentedControl
 {
@@ -488,7 +574,9 @@ local segmentedControl = widget.newSegmentedControl
     segmentWidth = (display.contentWidth/4)-2, -- four equal widths based on the size of the screen, minus 2 for offset to allow for internal lines to be drawn
     segments = { "Item 1", "Item 2", "Item 3", "Item 4" },
     defaultSegment = 1,
-    onPress = onSegmentPress
+    onPress = onSegmentPress,
+    labelFont="Arial"
+    
 }
 
 -- ++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -505,10 +593,64 @@ local segmentedControl = widget.newSegmentedControl
 -- http://giderosmobile.com/forum/discussion/397/simple-particle-engine/p1
 
 
-
+--Implementing Press and Hold in Corona SDK
+--http://blogs.msdn.com/b/matt-harrington/archive/2014/03/29/how-to-implement-press-and-hold-in-corona-sdk.aspx
 
 
 -- ++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 -- ++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+ -- clean this up int localized and callable from a script - make a widget?
+ -- can i add audio memory or any other imprints?
+local memUsed = (collectgarbage("count"))
+local texUsed = system.getInfo( "textureMemoryUsed" ) / 1048576
+local _memUsage = "Memory Usage\nSystem Memory: "..string.format("%.00f", memUsed).."KB\nTexture Memory: "..string.format("%.03f", texUsed).."MB"
+-- print to simulator
+local _memUsageObject = display.newText( _memUsage, 240, 40, "Arial", 12)
+
+
+local printMemUsage = function()
+
+memUsed = (collectgarbage("count"))
+texUsed = system.getInfo( "textureMemoryUsed" ) / 1048576
+
+_memUsageObject.text = "Memory Usage\nSystem Memory: "..string.format("%.00f", memUsed).."KB\nTexture Memory: "..string.format("%.03f", texUsed).."MB"
+
+end
+
+if (system.getInfo("environment") == "simulator") then
+Runtime:addEventListener( "enterFrame", printMemUsage)
+end
+
+-- @DEBUG monitor Memory Usage
+--[[
+local printMemUsage = function()
+local memUsed = (collectgarbage("count"))
+local texUsed = system.getInfo( "textureMemoryUsed" ) / 1048576 -- Reported in Bytes
+]]--
+
+-- print to console
+--[[
+print("\n---------MEMORY USAGE INFORMATION---------")
+print("System Memory: ", string.format("%.00f", memUsed), "KB")
+print("Texture Memory:", string.format("%.03f", texUsed), "MB")
+print("------------------------------------------\n")
+]]--
+
+--[[
+_memUsage = "Memory Usage\nSystem Memory: "..string.format("%.00f", memUsed).."KB\nTexture Memory: "..string.format("%.03f", texUsed).."MB"
+-- print to simulator
+local myTextObject5 = display.newText( _memUsage, 240, 40, "Arial", 12)
+
+end
+]]--
+ 
+-- Only load memory monitor if running in simulator
+--if (system.getInfo("environment") == "simulator") then
+--Runtime:addEventListener( "enterFrame", printMemUsage)
+--end 
+
+
 -- ++++++++++++++++++++++++++++++++++++++++++++++++++++
