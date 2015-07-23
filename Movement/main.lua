@@ -4,6 +4,11 @@
 --
 -----------------------------------------------------------------------------------------
 
+--SIMULATOR view -> view as... to change to a different device
+
+-- Corona Labs Youtube Channel
+-- https://www.youtube.com/channel/UCosEwj9k_-HqkGPFk4072sA
+
 --optimizations
 --http://docs.coronalabs.com/guide/basics/optimization/index.html#lua-optimizations
 
@@ -11,6 +16,24 @@
 
 --parallax
 --http://coronalabs.com/blog/2012/10/16/parallax-simplified/
+--http://forums.coronalabs.com/topic/29780-parallax-scrolling-with-changing-backgrounds/
+--http://www.deepblueapps.com/gs-parallax-scrolling/
+--https://www.youtube.com/watch?v=0GtUxdSeWzk
+--https://www.youtube.com/watch?v=FrS8P_cx9F8
+--http://stackoverflow.com/questions/17438859/corona-sdk-use-scrollview-listener-to-move-image-with-scrolling-momentum
+
+--build and endless runner game from scratch
+-- http://code.tutsplus.com/tutorials/corona-sdk-build-an-endless-runner-game-from-scratch--mobile-9256
+
+--next steps 
+--create a workflow for a game - design, implement, repositoty, testing, debugging, reporting, publishing - others?
+--how to find device id
+--set all anchors and reference points in relation to viewable area
+--be able to detect dimensions
+--logging for crash report
+--what to add for testing
+--be able to scale objects based on the display dimensions
+--when orientation change is detected - redraw the screen with new dimensions (or just 180)
 
 
 --[[put this somewhere
@@ -32,6 +55,9 @@ application =
 -- from here
 -- http://webtutsdepot.com/2011/11/27/corona-sdk-tutorial-circle-object/
 ]]
+
+
+-- how to use math.random wwiht 25 color = math.random(0,255)/255
 
 -- DEBUG
 print("\n++++++++++++++++++++++++++++++++++++++++++++++++\n")
@@ -84,6 +110,40 @@ Runtime:addEventListener( "orientation", changeOrientation )
 local background = display.newRect(display.contentCenterX, display.contentCenterY, display.contentWidth ,display.contentHeight)
 local backgroundColor = { 0, 0, 128/255, 0.75 } --set color as varaiable that can ebe called/changed later
 background:setFillColor( backgroundColor[1], backgroundColor[2], backgroundColor[3], backgroundColor[4]  )  -- alpha 1.0 is opaque, 0.0 is transparent
+
+
+
+
+
+-- +++++++++++++++++++++ USE THIS FOR SLOT IMAGE ANIMATION +++++++++++++++++++++
+
+--[[
+local sheetData = { width=100, height=100, numFrames=7, sheetContentWidth=100, sheetContentHeight=800 }
+ 
+local mySheet = graphics.newImageSheet( "/Assets/slots1.png", sheetData )
+local sequenceData = {
+{ name = "normalRun", start=1, count=7, time=2000},
+{ name = "fastRun", frames={ 1,2,4,5,6 }, time=250 }
+}
+local animationSprite = display.newSprite( mySheet, sequenceData )
+
+animationSprite.x = display.contentWidth/2 --center the sprite horizontally
+animationSprite.y = display.contentHeight/4 --center the sprite vertically -div 2 = middle, no div = bottom div 4 = top
+
+-- Scale the image down to 25%
+--animationSprite.xScale = 0.5
+--animationSprite.yScale = 0.5
+
+animationSprite:play()
+
+]]--
+
+
+
+
+
+
+
 
 
 

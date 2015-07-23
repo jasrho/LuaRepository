@@ -80,6 +80,10 @@ Everything between brackets is commented
 
 -- http://www.reddit.com/r/CoronaSDK/
 
+-- http://luatut.com/crash_course.html
+
+-- http://coronalabs.com/blog/2013/05/28/tutorial-goodbye-globals/
+
 --Tiling
 --http://forums.coronalabs.com/topic/43973-side-scrolling-background-image-logic/
 
